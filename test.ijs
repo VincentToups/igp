@@ -32,7 +32,7 @@ heatmap =: dyad define
   x heatmapbody withFilenames <(gridToHeatmapData y)
 )
 
-gp =: setupGnuPlot''
+NB. gp =: setupGnuPlot''
 
 
 NB. gp title 'testing title'
@@ -41,10 +41,9 @@ NB. gp ylabel 'test-y'
 NB. gp xrange (0,3)
 NB. gp heatmap (5 < (? (10 10 $ 10)))
 
+title 'testing image'
+xlabel 'test-x'
+ylabel 'test-y'
 
-gp title 'testing title'
-gp xlabel 'test-x'
-gp ylabel 'test-y'
-
-gp image (5 < (? (10 10 $ 10)))
+image (5 < (? (10 10 $ 10)))
 

@@ -6,7 +6,7 @@ fwrite =: 1!:2
 writenl =. '%s\n'&sprintf@:<@:[ fwrite ]
 send =: writenl~
 
-randstr =. ] , ":@:(?&10000)@:1:
+randstr =: ] , ":@:(?&10000)@:1:
 
 tmpfiledir =: '/tmp/'
 
@@ -20,7 +20,9 @@ mainGnuPlot =: 0$0
 
 ensureGnuPlot =: monad define 
 if. mainGnuPlot -: 0$0 do.
+	smoutput 'setting up new gnuplot'
 	mainGnuPlot =: setupGnuPlot''
+    mainGnuPlot
 else.
 	mainGnuPlot
 end.
@@ -65,31 +67,31 @@ withFilenames =: adverb define
 )
 
 title =: verb define 
-  ensureGnuPlot'' title y
+  (ensureGnuPlot'') title y
   :
   'set title "%s"' (x gpfmt) <y
 )
 
 xlabel =: verb define 
-  ensureGnuPlot'' xlabel y
+  (ensureGnuPlot'') xlabel y
   :
   'set xlabel "%s"' (x gpfmt) <y
 )
 
 ylabel =: verb define 
-  ensureGnuPlot'' ylabel y
+  (ensureGnuPlot'') ylabel y
   :
   'set ylabel "%s"' (x gpfmt) <y
 )
 
 yrange =: verb define 
-  ensureGnuPlot'' yrange y
+  (ensureGnuPlot'') yrange y
   :
   'set yrange [%f:%f]' (x gpfmt) y
 )
 
 xrange =: verb define 
-  ensureGnuPlot'' xrange y
+  (ensureGnuPlot'') xrange y
   :
   'set xrange [%f:%f]' (x gpfmt) y
 )
@@ -100,16 +102,15 @@ imagebody_raw =: dyad define
 )
 
 image_raw =: verb define 
-  ensureGnuPlot'' image y 
+  (ensureGnuPlot'') image y 
 :
   x (imagebody withFilenames) <y
 )
 
 
 image =: verb define 
-  ensureGnuPlot'' image y 
+  (ensureGnuPlot'') image y 
 :
-  smoutput (_0.5,((1{$y)-0.5))
   x xrange (_0.5,((1{$y)-0.5))
   x yrange (_0.5,((0{$y)-0.5))
   x size 'square'
@@ -117,7 +118,7 @@ image =: verb define
 )
 
 size =: dyad define 
- x size y
+ (ensureGnuPlot'') size y
 :
  'set size %s' x gpfmt <y
 )
