@@ -3,6 +3,7 @@ load 'format/printf'
 unboxedP =: -.@:L.
 boxedP =: L.
 
+
 always =: adverb define 
   y
   m
@@ -75,6 +76,13 @@ fwrite =: 1!:2
 writenl =. '%s\n'&sprintf@:<@:[ fwrite ]
 send =: writenl~
 
+gnuplotfwrites =: dyad define
+  file =. y
+  data =. x  
+  datas =. ('%f' sprintf <data)
+  datas fwrites file
+)
+
 randstr =: ] , ":@:(?&10000)@:1:
 
 tmpfiledir =: '/tmp/'
@@ -120,7 +128,7 @@ tmpfile =: monad define
 
 writeToTmp =: monad define
   'd f' =. y
-  d fwrites f
+  d gnuplotfwrites f
 )
 
 withFilenames =: adverb define
@@ -141,7 +149,7 @@ asFiles =: monad define
 
 asFile =: monad define
   name =. tmpfile''
-  y fwrites name
+  y gnuplotfwrites name
   name
 )
 
