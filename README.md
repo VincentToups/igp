@@ -33,9 +33,33 @@ And then use it like so:
 
 The verbs 
 
-    title, xlabel, ylabel, xrange, yrange, image
+    title, xlabel, ylabel, xrange, yrange, image, histogram,
+    saveplot, reset
 
 Are predefined to interact with gnuplot (these are my initial use cases).  In the monadic case they use the result of `ensureGnuPlot''` while their dyadic cases take `x` as they gnuplot handle.
+
+Most of these verbs are self evident in their usage, but documentation for some is useful:
+
+
+1. `histogram` plots a histogram of the list of data stored in `y` to either the default gnuplot session in the monadic invocation or to the gnuplot pointed to by `x`.  `x` may additionally be a rank 2 box array whose first column is option names and whose second column is value.  In this case, the supported options are, `gnuplot`, the gnuplot session; `binwidth`, the width of bins to use, and `plot-title`, the name of the plot lines, rather than the title of the entire plot.
+2.  `options` takes a rank 1, even lengthed, box list and converts it into an options object appropriate for `histogram` and other functions which require options.
+
+Example:
+
+    clusterSize1 =: 100
+    e1d1 =: (3 1.2) gausian clusterSize1
+    e1d2 =: (9 1.2) gausian clusterSize1
+
+    e1labeled =:  (((clusterSize1$0),(clusterSize1$1))) ,: (e1d1,e1d2)
+    e1data =: 1 { e1labeled
+    e1labels =: 0 { e1labeled
+
+    reset''
+    (opts ('plot-title';'e1data';'binwidth';0.25)) histogram e1data
+
+Makes something like:
+
+![image example](./doc/hist_example.png)
 
 Interacting with Data
 ---------------------
@@ -58,4 +82,7 @@ Example:
 Here, `image_raw` calls `imagebody_raw` with a temporary file name containing the data in `y`.
 
 Data is dumped into the `tmp` directory, but you may want to delete it periodically if you are dealing with large data sets.
+
+There is also the helper verb `asFile` which takes a single data object and returns a file into which that data has been dumped.
+
 

@@ -1,5 +1,74 @@
 load 'format/printf'
 
+unboxedP =: -.@:L.
+boxedP =: L.
+
+always =: adverb define 
+  y
+  m
+:
+  x
+  y
+  m
+)
+
+nil =: (0$0)
+
+rankOne =: 1: -: (#@:$)
+rankTwo =: 2: -: (#@:$)
+talliesEven =: 0: -: (2: | #)
+twoColumns =: 2: -: 1&{@:$
+
+opts =: monad define
+  keysandvals =. y
+  assert. rankOne keysandvals
+  assert. talliesEven keysandvals
+  ii =. 2 | (i. #y)
+  keys =. (-. ii) # y
+  vals =. ii # y
+  keys (>@:[ ; ])"(0 0) vals
+)
+
+fullTally =: #@:,
+
+cleanFind =: dyad define
+  if. fullTally x -: 0 do.
+   1
+  else.
+   x i. y
+  end.
+)
+
+getoptdft =: monad define
+  0$0
+)
+getopt =: dyad define
+  options =. x
+  key =. y
+  assert. rankTwo options
+  assert. twoColumns options
+  if. 0 -: #options do.
+   nil
+  else. 
+    ii =. ((i.&1)@:(((key&-:@:>)"0)@:(((0&{)@:|:)))) options
+    if. ii < #options do.
+      (>@:(ii&{)@:(1&{)@:|:) options
+    else.
+	  nil
+    end.
+  end.
+)
+
+dft =: conjunction define 
+:
+  r =. x u y
+  if. r -: nil do.
+   n
+  else.
+   r
+  end.
+)
+
 spawn =:2!:0
 fopen =: 1!:21
 fwrite =: 1!:2
@@ -66,6 +135,16 @@ withFilenames =: adverb define
   x u ((<@:,@:>)"0 names)
 )
 
+asFiles =: monad define
+  ] withFilenames y
+)
+
+asFile =: monad define
+  name =. tmpfile''
+  y fwrites name
+  name
+)
+
 title =: verb define 
   (ensureGnuPlot'') title y
   :
@@ -121,4 +200,49 @@ size =: dyad define
  (ensureGnuPlot'') size y
 :
  'set size %s' x gpfmt <y
+)
+
+saveScript =: 0 : 0
+set terminal push
+set terminal %s
+set output "%s"
+replot
+set output
+set terminal pop
+)
+
+getType =. >@:{:@:(<;._2)@:(,&'.'@:])
+
+saveplot =: verb define
+  (ensureGnuPlot'') saveplot y
+:
+  filename =. y
+  type =. getType y
+  saveScript x gpfmt (type;filename)
+)
+
+asVector =: (#@:,@:] , 1:) $ ,@:]
+
+histogram =: verb define 
+  (ensureGnuPlot'') histogram y
+:
+data =. y
+if. boxedP x do.
+ options =. x
+ gph =. options getopt dft (ensureGnuPlot'') 'gnuplot'
+else.
+ gph =. x
+ options =. (opt '')
+end.
+mn =. <./ data
+mx =. >./ data 
+bw =. options getopt dft (0.1&* mx-mn) 'binwidth'
+pttl =. options getopt dft '' 'plot-title'
+smoutput options getopt dft '___c' 'x'
+smoutput (bw;pttl)
+'binwidth=%f\n' gph gpfmt <bw
+gph send 'set boxwidth binwidth'
+gph send 'bin(x,width)=width*floor(x/width) + binwidth/2.0' 
+s =. 'plot "%s" using (bin($1,binwidth)):(1.0) smooth freq title "%s" with boxes'
+s gph gpfmt ((asFile (asVector data));pttl)
 )
