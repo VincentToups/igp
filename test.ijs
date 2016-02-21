@@ -1,4 +1,5 @@
 load './igp.ijs'
+export_igp_'base'
 
 heatmapbody =: dyad define
   g =. x

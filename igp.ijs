@@ -1,3 +1,4 @@
+cocurrent 'igp'
 load 'format/printf'
 
 unboxedP =: -.@:L.
@@ -254,3 +255,25 @@ gph send 'bin(x,width)=width*floor(x/width) + binwidth/2.0'
 s =. 'plot "%s" using (bin($1,binwidth)):(1.0) smooth freq title "%s" with boxes'
 s gph gpfmt ((asFile (asVector data));pttl)
 )
+
+export =: monad define 
+  cocurrent y
+  opts =: opts_igp_
+  ensureGnuPlot =: ensureGnuPlot_igp_
+  setupGnuPlot =: setupGnuPlot_igp_
+  withFilenames =: withFilenames_igp_
+  asFiles =: asFiles_igp_
+  asFile =: asFile_igp_
+  title =: title_igp_
+  xlabel =: xlabel_igp_
+  ylabel =: ylabel_igp_
+  xrange =: xrange_igp_
+  yrange =: yrange_igp_
+  image =: image_igp_
+  plotSize =: size_igp_
+  saveplot =: saveplot_igp_
+  plot_histogram =: histogram_igp_
+  
+)
+
+cocurrent 'base'
